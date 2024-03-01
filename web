@@ -1,0 +1,154 @@
+Be sure to add the following to VM arguments: --add-modules javafx.web
+
+package application;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebHistory;
+import javafx.scene.web.WebView;
+
+public class Controller implements Initializable{
+
+	@FXML
+	private WebView webView;
+	@FXML
+	private TextField textField;
+	
+	private WebEngine engine;
+	private WebHistory history;
+	private String homePage;
+	private double webZoom;
+	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		engine = webView.getEngine();
+		homePage = "www.google.com";
+		textField.setText(homePage);
+		webZoom = 1;
+		loadPage();
+	}
+	
+	public void loadPage() {
+		
+		//engine.load("http://www.google.com");
+		engine.load("http://"+textField.getText());
+	}
+	
+	public void refreshPage() {
+		
+		engine.reload();
+	}
+	
+	public void zoomIn() {
+		
+		webZoom+=0.25;
+		webView.setZoom(webZoom);
+	}
+	
+	public void zoomOut() {
+		
+		webZoom-=0.25;
+		webView.setZoom(webZoom);
+	}
+	
+	public void displayHistory() {
+		
+		history = engine.getHistory();
+		ObservableList<WebHistory.Entry> entries = history.getEntries();
+		
+		for(WebHistory.Entry entry : entries) {
+			
+			//System.out.println(entry);
+			System.out.println(entry.getUrl()+" "+entry.getLastVisitedDate());
+		}
+	}
+	
+	public void back() {
+		
+		history = engine.getHistory();
+		ObservableList<WebHistory.Entry> entries = history.getEntries();
+		history.go(-1);
+		
+		textField.setText(entries.get(history.getCurrentIndex()).getUrl());
+	}
+	
+	public void forward() {
+		
+		history = engine.getHistory();
+		ObservableList<WebHistory.Entry> entries = history.getEntries();
+		history.go(1);
+		
+		textField.setText(entries.get(history.getCurrentIndex()).getUrl());
+	}
+	
+	public void executeJS() {
+		
+		engine.executeScript("window.location = \"https://www.youtube.com\";");
+	}
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.web.WebView?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+   <children>
+      <WebView fx:id="webView" layoutX="7.0" layoutY="71.0" prefHeight="505.0" prefWidth="749.0" />
+      <Button layoutY="46.0" mnemonicParsing="false" onAction="#loadPage" text="load" />
+      <TextField fx:id="textField" layoutY="21.0" onAction="#loadPage" prefHeight="25.0" prefWidth="757.0" />
+      <Button layoutX="40.0" layoutY="46.0" mnemonicParsing="false" onAction="#refreshPage" text="refresh" />
+      <Button layoutX="93.0" layoutY="46.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+      <Button layoutX="118.0" layoutY="46.0" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="25.0" text="-" />
+      <Button layoutX="143.0" layoutY="46.0" mnemonicParsing="false" onAction="#displayHistory" text="history" />
+      <Button layoutX="195.0" layoutY="46.0" mnemonicParsing="false" onAction="#back" text="back" />
+      <Button layoutX="236.0" layoutY="46.0" mnemonicParsing="false" onAction="#forward" text="forward" />
+      <Button layoutX="293.0" layoutY="46.0" mnemonicParsing="false" onAction="#executeJS" text="execute JS" />
+   </children>
+</AnchorPane>
+
+package application;
+	
+import java.io.IOException;
+
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+
+public class Main extends Application {
+	
+	@Override
+	public void start(Stage stage) throws IOException {
+		
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Scene.fxml"));
+		Parent root = loader.load();	
+		Controller controller = loader.getController();
+		Scene scene = new Scene(root);		
+		
+		//stage.getIcons().add(new Image("icon.png"));
+		//stage.setTitle("Bro web browser");
+		stage.setScene(scene);
+		stage.show();
+	}	
+
+	public static void main(String[] args) {
+		
+		launch(args);
+	}
+}
