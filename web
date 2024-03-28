@@ -1,6 +1,3 @@
-Be sure to add the following to VM arguments: --add-modules javafx.web
-
-package application;
 
 import java.net.URL;
 import java.util.ResourceBundle;
