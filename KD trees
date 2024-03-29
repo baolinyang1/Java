@@ -5,7 +5,6 @@ import lib280.base.NDPoint280;
 import lib280.exception.InvalidArgument280Exception;
 import lib280.list.LinkedList280;
 
-
 public class KDTree280 {
 	private KDNode280 root;
 	private int dim;
