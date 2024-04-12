@@ -1,6 +1,5 @@
 package lib280.tree;
 
-
 import lib280.base.NDPoint280;
 import lib280.exception.InvalidArgument280Exception;
 import lib280.list.LinkedList280;
